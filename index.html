@@ -68,8 +68,8 @@
 		</table> 
 		
 		<!-- Firebase SDK --> 
-		<script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js"></script> 
-		<script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js"></script> 
+		<script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script> 
+		<script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore-compat.js"></script> 
 		<script> 
 			
 			// Replace with your Firebase config from Firebase Console 
@@ -84,8 +84,8 @@
 			};
 			
 			// Initialize Firebase 
-			firebase.initializeApp(firebaseConfig); 
-			const db = firebase.firestore(); 
+			const app = firebase.initializeApp(firebaseConfig); 
+			const db = firebase.firestore(app); 
 			
 			let golfers = []; 
 			
@@ -109,16 +109,17 @@
 					return; 
 				} 
 				try {
-					const querySapshot = await db.collection('golfers')
+					const querySnapshot = await db.collection('golfers')
 					.where('name', '==', name)
 					.get();
 				if (!querySnapshot.empty) { 
 					alert('Golfer already exists!'); 
 					return; 
 				} 
-					await db.collection('golfers').add({ name: name, scores: [] }); 
-				document.getElementById('golferName').value = ''; 
-					console.error(Golfer added:", name);
+				const docRef = await
+					db.collection('golfers').add({ name: name, scores: [] }); 
+					console.log("Golfer added with ID:", docRef.id;
+				document.getElementById('golferName'.value = '';
 					} catch (error) { 
 						console.error('Error adding golfer:', error); 
 						alert('Failed to add golfer: ' + error.message); 

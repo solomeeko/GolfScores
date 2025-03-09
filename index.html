@@ -92,10 +92,11 @@
 			// Initial data fetch and real-time listener 
 			document.addEventListener('DOMContentLoaded', () => { 
 			db.collection('golfers').onSnapshot((snapshot) => { golfers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+			   	console.log("Golfers vfrom firestore:", golfers);
 				updateTable(); 
 				updateGolferSelect(); 
 			}, (error) => { 
-				console.error('Error fetching initial data:', error); 
+				console.error('Error fetching data:', error); 
 				alert('Failed to load golfers. Please refresh the page.'); 
 				}); 
 			}); 
@@ -103,20 +104,24 @@
 			async function addGolfer(event) { 
 				event.preventDefault(); 
 				const name = document.getElementById('golferName').value.trim(); 
-				if (!name) { alert('Please enter a golfer name!'); 
+				if (!name) { 
+					alert('Please enter a golfer name!'); 
 					return; 
 				} 
-				if (golfers.some(g => g.name === name)) { 
+				try {
+					const querySapshot = await db.collection('golfers')
+					.where('name', '==', name)
+					.get();
+				if (!querySnapshot.empty) { 
 					alert('Golfer already exists!'); 
 					return; 
 				} 
-				try { 
-					await db.collection('golfers').add({ name: name, scores: [] 
-				}); 
+					await db.collection('golfers').add({ name: name, scores: [] }); 
 				document.getElementById('golferName').value = ''; 
+					console.error(Golfer added:", name);
 					} catch (error) { 
 						console.error('Error adding golfer:', error); 
-						alert('Failed to add golfer. Please try again.'); 
+						alert('Failed to add golfer: ' + error.message); 
 					} 
 				} 
 				

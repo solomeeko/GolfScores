@@ -1,0 +1,185 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8"> 
+	<title>Gomez Golf League Score Tracker</title> 
+	<style> 
+		body { 
+			font-family: Arial, sans-serif; 
+			margin: 20px; 
+			text-align: center; 
+		} 
+		table { 
+			border-collapse: collapse; 
+			width: 80%; 
+			margin: 20px auto; 
+		} 
+		th, td { 
+			border: 1px solid black; 
+			padding: 4px; 
+			text-align: center; 
+			vertical-align: top; 
+		} 
+		th { 
+			background-color: #f2f2f2; 
+		} 
+		form { 
+			margin: 10px; 
+		} 
+		.scores { 
+			max-width: 2000px; 
+			white-space: normal; 
+		} 
+		tr { 
+			height: auto; 
+		} 
+		</style> 
+	</head> 
+	<body> 
+		<h1>Gomez Golf League Score Tracker</h1> 
+		
+		<form id="addGolferForm" onsubmit="addGolfer(event)"> 
+			<label for="golferName">Golfer Name:</label> 
+			<input type="text" id="golferName" required> 
+			<button type="submit">Add Golfer</button> 
+			</form> 
+			
+		<form id="addScoreForm" onsubmit="addScore(event)"> 
+			<label for="golferSelect">Golfer:</label> 
+			<select id="golferSelect"> <option value="">Select a golfer</option> 
+			</select> <label for="score">Score:</label> 
+			<input type="number" id="score" min="0" required> 
+			<label for="date">Date:</label> 
+			<input type="date" id="date" required> 
+			<label for="course">Course:</label> 
+			<input type="text" id="course" required> 
+			<button type="submit">Add Score</button> 
+		</form> 
+		
+		<table id="golfersTable"> 
+			<thead> 
+				<tr> 
+					<th>Name</th> 
+					<th>Scores (Date, Course)</th> 
+					<th>Total</th> 
+				</tr> 
+			</thead> 
+			<tbody id="golfersBody"></tbody> 
+		</table> 
+		
+		<!-- Firebase SDK --> 
+		<script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js"></script> 
+		<script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js"></script> 
+		<script> 
+			
+			// Replace with your Firebase config from Firebase Console 
+			const firebaseConfig = {
+  				apiKey: "AIzaSyAHlNTf55y7dwxt2oasU-m4NaLmOE1i3Tc",
+  				authDomain: "gomezgolfleague.firebaseapp.com",
+  				projectId: "gomezgolfleague",
+  				storageBucket: "gomezgolfleague.firebasestorage.app",
+  				messagingSenderId: "188039787968",
+  				appId: "1:188039787968:web:ca5d9161b1ce438ea90425",
+  				measurementId: "G-85DG5QRPTV"
+			};
+			
+			// Initialize Firebase 
+			firebase.initializeApp(firebaseConfig); 
+			const db = firebase.firestore(); 
+			
+			let golfers = []; 
+			
+			// Initial data fetch and real-time listener 
+			document.addEventListener('DOMContentLoaded', () => { 
+			db.collection('golfers').onSnapshot((snapshot) => { golfers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+				updateTable(); 
+				updateGolferSelect(); 
+			}, (error) => { 
+				console.error('Error fetching initial data:', error); 
+				alert('Failed to load golfers. Please refresh the page.'); 
+				}); 
+			}); 
+			
+			async function addGolfer(event) { 
+				event.preventDefault(); 
+				const name = document.getElementById('golferName').value.trim(); 
+				if (!name) { alert('Please enter a golfer name!'); 
+					return; 
+				} 
+				if (golfers.some(g => g.name === name)) { 
+					alert('Golfer already exists!'); 
+					return; 
+				} 
+				try { 
+					await db.collection('golfers').add({ name: name, scores: [] 
+				}); 
+				document.getElementById('golferName').value = ''; 
+					} catch (error) { 
+						console.error('Error adding golfer:', error); 
+						alert('Failed to add golfer. Please try again.'); 
+					} 
+				} 
+				
+				async function addScore(event) { event.preventDefault(); 
+					const golferName = document.getElementById('golferSelect').value; 
+					const score = parseInt(document.getElementById('score').value); 
+					const date = document.getElementById('date').value; 
+					const course = document.getElementById('course').value.trim(); 
+					if (!golferName) { 
+						alert('Please select a golfer!'); 
+						return; 
+					} 
+					if (!date) { 
+						alert('Please select a date!'); 
+						return; 
+					} 
+					if (new Date(date) > new Date()) { 
+						alert('Cannot add future scores!'); 
+						return; 
+					} 
+					if (!course) { 
+						alert('Please enter a course name!'); 
+						return; 
+					} 
+					const golfer = golfers.find(g => g.name === golferName); 
+					if (!golfer) return; 
+					const updatedScores = golfer.scores ? [...golfer.scores, { score, date, course }] : [{ score, date, course }]; 
+					try { 
+						await db.collection('golfers').doc(golfer.id).update({ scores: updatedScores }); 
+						document.getElementById('score').value = ''; 
+						document.getElementById('date').value = ''; 
+						document.getElementById('course').value = ''; 
+						} catch (error) { 
+							console.error('Error adding score:', error); 
+							alert('Failed to add score. Please try again.'); 
+						} 
+					} 
+					
+					function updateTable() { 
+						const tbody = document.getElementById('golfersBody'); 
+						tbody.innerHTML = ''; 
+						golfers.sort((a, b) => a.name.localeCompare(b.name)).forEach(golfer => { 
+							const row = document.createElement('tr'); 
+							row.innerHTML = ` 
+								<td>${golfer.name}</td> 
+								<td class="scores">${(golfer.scores || []) .sort((a, b) => new Date(a.date) - new Date(b.date)) .map(s => `<span style="white-space: nowrap;">${s.score} (${s.date}, ${s.course})</span>`) .join(', ') || '-'}</td> 
+								<td>${(golfer.scores || []).reduce((sum, s) => sum + s.score, 0) || '0'}</td> 
+								`; 
+							tbody.appendChild(row); 
+						}); 
+					} 
+					
+					function updateGolferSelect() { 
+						const select = document.getElementById('golferSelect'); 
+						const currentValue = select.value; 
+						select.innerHTML = '<option value="">Select a golfer</option>'; 
+						golfers.sort((a, b) => a.name.localeCompare(b.name)).forEach(golfer => { 
+							select.innerHTML += `<option value="${golfer.name}">${golfer.name}</option>`; 
+						}); 
+						if (golfers.some(g => g.name === currentValue)) { 
+							select.value = currentValue; 
+						} 
+					} 
+				</script> 
+			</body> 
+		</html>

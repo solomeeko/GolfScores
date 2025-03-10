@@ -48,7 +48,9 @@
 			<label for="golferSelect">Golfer:</label> 
 			<select id="golferSelect"> <option value="">Select a golfer</option> 
 			</select> <label for="score">Score:</label> 
-			<input type="number" id="score" min="0" required> 
+			<input type="number" id="score" min="0" required>
+			<label for="par">Par:</label>
+			<input type="number" id="score" min="0" max="100" required>			 
 			<label for="date">Date:</label> 
 			<input type="date" id="date" required> 
 			<label for="course">Course:</label> 
@@ -60,8 +62,9 @@
 			<thead> 
 				<tr> 
 					<th>Name</th> 
-					<th>Scores (Date, Course)</th> 
-					<th>Total</th> 
+					<th>Scores (Date, Course)</th>
+					<th>Par</th> 
+					<th>Total (vs Par)</th> 
 				</tr> 
 			</thead> 
 			<tbody id="golfersBody"></tbody> 
@@ -128,7 +131,8 @@
 				
 				async function addScore(event) { event.preventDefault(); 
 					const golferName = document.getElementById('golferSelect').value; 
-					const score = parseInt(document.getElementById('score').value); 
+					const score = parseInt(document.getElementById('score').value);
+					const par =  parseInt(document.getElementById('par').value);
 					const date = document.getElementById('date').value; 
 					const course = document.getElementById('course').value.trim(); 
 					if (!golferName) { 
@@ -146,13 +150,19 @@
 					if (!course) { 
 						alert('Please enter a course name!'); 
 						return; 
-					} 
+					}
+					if (!par) { 
+						alert('Please enter a par!'); 
+						return;
+					}
+					
 					const golfer = golfers.find(g => g.name === golferName); 
 					if (!golfer) return; 
-					const updatedScores = golfer.scores ? [...golfer.scores, { score, date, course }] : [{ score, date, course }]; 
+					const updatedScores = golfer.scores ? [...golfer.scores, { score, par, date, course }] : [{ score, par, date, course }]; 
 					try { 
 						await db.collection('golfers').doc(golfer.id).update({ scores: updatedScores }); 
 						document.getElementById('score').value = ''; 
+						document.getElementById('par').value = ''; 
 						document.getElementById('date').value = ''; 
 						document.getElementById('course').value = ''; 
 						} catch (error) { 
@@ -165,11 +175,16 @@
 						const tbody = document.getElementById('golfersBody'); 
 						tbody.innerHTML = ''; 
 						golfers.sort((a, b) => a.name.localeCompare(b.name)).forEach(golfer => { 
+							const scores = golfer.scores || [];
+							const totalScore = scores.reduce((sum, s) => sum + s.score, 0);
+							const totalPar = scores.reduce((sum, s) => sum + s.par || 0), 0);
+							const vsPar = totalScore = totalPar;							
 							const row = document.createElement('tr'); 
 							row.innerHTML = ` 
 								<td>${golfer.name}</td> 
-								<td class="scores">${(golfer.scores || []) .sort((a, b) => new Date(a.date) - new Date(b.date)) .map(s => `<span style="white-space: nowrap;">${s.score} (${s.date}, ${s.course})</span>`) .join(', ') || '-'}</td> 
-								<td>${(golfer.scores || []).reduce((sum, s) => sum + s.score, 0) || '0'}</td> 
+								<td class="scores">${(scores.sort((a, b) => new Date(a.date) - new Date(b.date)) .map(s => `<span style="white-space: nowrap;">${s.score} (Par ${s.par}, (${s.date}, ${s.course})</span>`) .join(', ') || '-'}</td> 
+								<td>${totalPar || '0'}</td>
+								<td>${vsPar >= 0 ? '+' : ''}${vsPar || '0'}</td>
 								`; 
 							tbody.appendChild(row); 
 						}); 

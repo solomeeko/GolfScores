@@ -91,7 +91,7 @@
 		</style> 
 	</head> 
 	<body> 
-		<h1>Gomez Golf League Score Tracker</h1> 
+		<h1>GGL Score Tracker</h1> 
 		
 		<form id="addGolferForm" onsubmit="addGolfer(event)"> 
 			<div class="form-group">
@@ -102,27 +102,29 @@
 			</form> 
 			
 		<form id="addScoreForm" onsubmit="addScore(event)">
-			<div class="form-group">
+		    <div class="form-group">
 			<label for="golferSelect">Golfer:</label> 
-			<select id="golferSelect"> <option value="">Select a golfer</option>
-			</div>
-			<div class="form-group">
-			</select> <label for="score">Score:</label> 
+			<select id="golferSelect"> 
+				<option value="">Select a golfer</option>
+			</select>
+		    </div>
+		    <div class="form-group">
+			<label for="score">Score:</label> 
 			<input type="number" id="score" min="0" required>
-			</div>
-			<div class="form-group">
+		    </div>
+		    <div class="form-group">
 			<label for="par">Par:</label>
 			<input type="number" id="par" min="0" max="100" required>
-			</div>
-			<div class="form-group">
+		    </div>
+		    <div class="form-group">
 			<label for="date">Date:</label> 
 			<input type="date" id="date" required> 
-			</div>
-			<div class="form-group">
+		    </div>
+		    <div class="form-group">
 			<label for="course">Course:</label> 
 			<input type="text" id="course" required> 
 			<button type="submit">Add Score</button> 
-			</div>
+		    </div>
 		</form> 
 		
 		<table id="golfersTable"> 

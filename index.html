@@ -22,7 +22,7 @@
 		form {
 			margin: 10px;
 			background: #ffffff;
-			padding: 15px;
+			padding: 20px;
 			border-radius: 8px;
 			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 		}
@@ -72,11 +72,17 @@
 			background: #e8f5e9;
 		}
 		.form-group {
-			display: row;
-			flex-direction: column;
-			align-items: center;
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 20px;
 			margin: 10px 0;
 		}
+		input-item {
+			display: flex;
+			flex-direction: column;
+			align=items: center;
 		.form-group label {
 			margin-bottom: 5px;
 			font-weight: 700;
@@ -87,6 +93,10 @@
 			border: 1px solid #ccc;
 			border-radius: 4px;
 			width: 200px;
+			font-size: 20px;
+		}
+		form-group button {
+			margin-top: 25px;
 		}
 		</style> 
 	</head> 
@@ -95,35 +105,43 @@
 		
 		<form id="addGolferForm" onsubmit="addGolfer(event)"> 
 			<div class="form-group">
+			<div class="input-item">
 			<label for="golferName">Golfer Name:</label> 
 			<input type="text" id="golferName" required> 
+			</div>
+			<div class="input-item">
 			<button type="submit">Add Golfer</button>
+			</div>
 			</div>
 			</form> 
 			
 		<form id="addScoreForm" onsubmit="addScore(event)">
 		    <div class="form-group">
+			    <div class="input-item">
 			<label for="golferSelect">Golfer:</label> 
 			<select id="golferSelect"> 
 				<option value="">Select a golfer</option>
 			</select>
 		    </div>
-		    <div class="form-group">
+		    <div class="input-item">
 			<label for="score">Score:</label> 
 			<input type="number" id="score" min="0" required>
 		    </div>
-		    <div class="form-group">
+		    <div class="input-item">
 			<label for="par">Par:</label>
 			<input type="number" id="par" min="0" max="100" required>
 		    </div>
-		    <div class="form-group">
+		    <div class="input-item">
 			<label for="date">Date:</label> 
 			<input type="date" id="date" required> 
 		    </div>
-		    <div class="form-group">
+		    <div class="input-item">
 			<label for="course">Course:</label> 
-			<input type="text" id="course" required> 
+			<input type="text" id="course" required>
+		    </div>
+			    <div class="input-item">
 			<button type="submit">Add Score</button> 
+		    </div>
 		    </div>
 		</form> 
 		

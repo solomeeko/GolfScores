@@ -24,6 +24,7 @@
 			padding: 15px;
 			border-radius: 8px;
 			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		}
 		table { 
 			border-collapse: seperate; 
 			width: 80%; 
@@ -228,7 +229,7 @@
 								<td>${golfer.name}</td> 
 								<td class="scores">${scores
 										      .sort((a, b) => new Date(a.date) - new Date(b.date)) 
-										      .map(s => `<span style="white-space: nowrap;">${s.score} (Par ${s.par} || 'N/A'}. 
+										      .map(s => `<span style="white-space: nowrap;">${s.score} (Par ${s.par || 'N/A'}, 
 												${s.date}, ${s.course})</span>`)
 										     .join(', ') || '-'}</td> 
 								<td>${totalPar || '0'}</td>

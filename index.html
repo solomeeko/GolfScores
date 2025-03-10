@@ -184,8 +184,9 @@
 								<td>${golfer.name}</td> 
 								<td class="scores">${scores
 										      .sort((a, b) => new Date(a.date) - new Date(b.date)) 
-										      .map(s => `<span style="white-space: nowrap;">${s.score} (Par ${s.par}, 
-												${s.date}, ${s.course})</span>`) .join(', ') || '-'}</td> 
+										      .map(s => `<span style="white-space: nowrap;">${s.score} (Par ${s.par} || 'N/A'}. 
+												${s.date}, ${s.course})</span>`)
+										     .join(', ') || '-'}</td> 
 								<td>${totalPar || '0'}</td>
 								<td>${vsPar >= 0 ? '+' : ''}${vsPar || '0'}</td>
 								`; 

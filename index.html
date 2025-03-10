@@ -133,6 +133,10 @@
 			<input type="number" id="par" min="0" max="100" required>
 		    </div>
 		    <div class="input-item">
+			<label for="par">Holes:</label>
+			<input type="number" id="holes" min="1" max="100" required>
+		    </div>
+		    <div class="input-item">
 			<label for="date">Date:</label> 
 			<input type="date" id="date" required> 
 		    </div>
@@ -152,7 +156,9 @@
 					<th>Name</th> 
 					<th>Scores (Date, Course)</th>
 					<th>Par</th> 
-					<th>Total (vs Par)</th> 
+					<th>Total (vs Par)</th>
+					<th>Total Holes</th> 
+
 				</tr> 
 			</thead> 
 			<tbody id="golfersBody"></tbody> 
@@ -246,11 +252,12 @@
 					
 					const golfer = golfers.find(g => g.name === golferName); 
 					if (!golfer) return; 
-					const updatedScores = golfer.scores ? [...golfer.scores, { score, par, date, course }] : [{ score, par, date, course }]; 
+					const updatedScores = golfer.scores ? [...golfer.scores, { score, par, holes, date, course }] : [{ score, par, holes, date, course }]; 
 					try { 
 						await db.collection('golfers').doc(golfer.id).update({ scores: updatedScores }); 
 						document.getElementById('score').value = ''; 
 						document.getElementById('par').value = ''; 
+						document.getElementById('holes').value = ''; 
 						document.getElementById('date').value = ''; 
 						document.getElementById('course').value = ''; 
 						} catch (error) { 
@@ -266,6 +273,7 @@
 							const scores = golfer.scores || [];
 							const totalScore = scores.reduce((sum, s) => sum + s.score, 0);
 							const totalPar = scores.reduce((sum, s) => sum + (s.par || 0), 0);
+							const totalHoles = scores.reduce((sum, s) => sum + (s.holes || 0), 0);
 							const vsPar = totalScore - totalPar;							
 							const row = document.createElement('tr'); 
 							row.innerHTML = ` 
@@ -273,10 +281,11 @@
 								<td class="scores">${scores
 										      .sort((a, b) => new Date(a.date) - new Date(b.date)) 
 										      .map(s => `<span style="white-space: nowrap;">${s.score} (Par ${s.par || 'N/A'}, 
-												${s.date}, ${s.course})</span>`)
+												Holes ${s.holes || 'N/A'}, ${s.date}, ${s.course})</span>`)
 										     .join(', ') || '-'}</td> 
 								<td>${totalPar || '0'}</td>
 								<td>${vsPar >= 0 ? '+' : ''}${vsPar || '0'}</td>
+								<td>${totalHoles || '0'}</td>
 								`; 
 							tbody.appendChild(row); 
 						}); 

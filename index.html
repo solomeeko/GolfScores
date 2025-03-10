@@ -26,7 +26,7 @@
 			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 		}
 		table { 
-			border-collapse: seperate; 
+			border-collapse: separate; 
 			width: 80%; 
 			margin: 20px auto;
 			background: #fff;
@@ -46,7 +46,16 @@
 		} 
 		td { 
 			background: #fafafa; 
-		} 
+		}
+		button {
+			background: #4caf50;
+			color: white;
+			border: none;
+			padding: 8px 16px;
+			border-radius: 5px;
+			cursor: pointer;
+			transition: background 0.3s;
+		}
 		button:hover {
 			background: #388e3c;
 		}
@@ -84,23 +93,35 @@
 		<h1>Gomez Golf League Score Tracker</h1> 
 		
 		<form id="addGolferForm" onsubmit="addGolfer(event)"> 
+			<div class="form-group">
 			<label for="golferName">Golfer Name:</label> 
 			<input type="text" id="golferName" required> 
-			<button type="submit">Add Golfer</button> 
+			<button type="submit">Add Golfer</button>
+			</div>
 			</form> 
 			
-		<form id="addScoreForm" onsubmit="addScore(event)"> 
+		<form id="addScoreForm" onsubmit="addScore(event)">
+			<div class="form-group">
 			<label for="golferSelect">Golfer:</label> 
-			<select id="golferSelect"> <option value="">Select a golfer</option> 
+			<select id="golferSelect"> <option value="">Select a golfer</option>
+			</div>
+			<div class="form-group">
 			</select> <label for="score">Score:</label> 
 			<input type="number" id="score" min="0" required>
+			</div>
+			<div class="form-group">
 			<label for="par">Par:</label>
-			<input type="number" id="par" min="0" max="100" required>			 
+			<input type="number" id="par" min="0" max="100" required>
+			</div>
+			<div class="form-group">
 			<label for="date">Date:</label> 
 			<input type="date" id="date" required> 
+			</div>
+			<div class="form-group">
 			<label for="course">Course:</label> 
 			<input type="text" id="course" required> 
 			<button type="submit">Add Score</button> 
+			</div>
 		</form> 
 		
 		<table id="golfersTable"> 

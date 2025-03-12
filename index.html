@@ -227,6 +227,7 @@
 					const golferName = document.getElementById('golferSelect').value; 
 					const score = parseInt(document.getElementById('score').value);
 					const par =  parseInt(document.getElementById('par').value);
+					const holes =  parseInt(document.getElementById('holes').value);
 					const date = document.getElementById('date').value; 
 					const course = document.getElementById('course').value.trim(); 
 					if (!golferName) { 
@@ -249,7 +250,10 @@
 						alert('Please enter a par!'); 
 						return;
 					}
-					
+					if (!holes) { 
+						alert('Please enter number of holes!'); 
+						return;
+					}
 					const golfer = golfers.find(g => g.name === golferName); 
 					if (!golfer) return; 
 					const updatedScores = golfer.scores ? [...golfer.scores, { score, par, holes, date, course }] : [{ score, par, holes, date, course }]; 

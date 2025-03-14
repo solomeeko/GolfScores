@@ -81,10 +81,11 @@
 			gap: 20px;
 			margin: 10px 0;
 		}
-		input-item {
+		.input-item {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
+		}
 		.form-group label {
 			margin-bottom: 5px;
 			font-weight: 700;
@@ -134,7 +135,7 @@
 			<input type="number" id="par" min="0" max="100" required>
 		    </div>
 		    <div class="input-item">
-			<label for="par">Holes:</label>
+			<label for="holes">Holes:</label>
 			<input type="number" id="holes" min="1" max="100" required>
 		    </div>
 		    <div class="input-item">
@@ -276,12 +277,12 @@
 							const formattedScores = scores.sort((a, b) => new Date(b.date) - new Date(a.date)).map(s => {
 							const vsPar = s.score - s.par;
 								return `<div style="white-space: nowrap; margin: 4px 0;">
-							${s.date}, ${s.course}, Score: ${s.score}, Par: ${s.par}, vs Par: ${vsPar >= 0 ? '+' : ''}${vsPar}, Holes: ${s.holes)</div>;
+							${s.date}, ${s.course}, Score: ${s.score}, Par: ${s.par}, Vs Par: ${vsPar >= 0 ? '+' : ''}${vsPar}, Holes: ${s.holes}</div>`;
        							})
        							.join('');	      
 							row.innerHTML = `
-       								<td>${score.golferName}</td>
-	       							<td>class="scores">${formattedScores || '-'}</td>
+       								<td>${golfer.name}</td>
+	       							<td class="scores">${formattedScores || '-'}</td>
 								`; 
 							tbody.appendChild(row); 
 						}); 

@@ -62,8 +62,9 @@
 			background: #388e3c;
 		}
 		.scores { 
-			max-width: 2000px; 
-			white-space: normal; 
+			text-align: left;
+			padding: 8px 12px;
+			line-height: 1.4;
 		} 
 		tr { 
 			height: auto;
@@ -154,12 +155,7 @@
 			<thead> 
 				<tr> 
 					<th>Name</th> 
-					<th>Date</th>
-					<th>Course</th>
-					<th>Score</th>
-					<th>Par</th> 
-					<th>vs Par</th>
-					<th>Holes Played</th> 
+					<th>Rounds (Date, Course, Score, Par, vs Par, Holes)</th>
 				</tr> 
 			</thead> 
 			<tbody id="golfersBody"></tbody> 
@@ -274,28 +270,18 @@
 					function updateTable() { 
 						const tbody = document.getElementById('golfersBody'); 
 						tbody.innerHTML = ''; 
-							const allScores = [];
-						golfers.forEach(golfer => {
+						golfers.sort((a, b) => a.name.localeCompare(b.name)).forEach(golfer => {
 							const scores = golfer.scores || [];
-							scores.forEach(score => {
-								allScores.push({
-									golferName: golfer.name,
-									...score
-								});
-							});
-						});
-						allScores.sort((a, b) => new Date(b.date) - new Date(a.date));
-						allScores.forEach(score => {
-							const vsPar = score.score - score.par;
-							const row = document.createElement('tr');
+							const row = document.createElement('tr'); 
+							const formattedScores = scores.sort((a, b) => new Date(b.date) - new Date(a.date)).map(s => {
+							const vsPar = s.score - s.par;
+								return `<div style="white-space: nowrap; margin: 4px 0;"}>
+							${s.date}, ${s.course}, ${vsPar || 'N/A'} holes </div>;
+       							})
+       							.join('');	      
 							row.innerHTML = `
        								<td>${score.golferName}</td>
-	       							<td>${score.date}</td>
-	       							<td>${score.course}</td>
-	       							<td>${score.score}</td>
-	       							<td>${score.par || 'N/A'}</td>
-								<td>${vsPar >= 0 ? '+' : ''}${vsPar}</td>
-								<td>${score.holes || 'N/A'}</td>
+	       							<td>class="scores">${formattedScores || '-'}</td>
 								`; 
 							tbody.appendChild(row); 
 						}); 

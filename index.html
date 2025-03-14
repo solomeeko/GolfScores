@@ -29,7 +29,7 @@
 		}
 		table { 
 			border-collapse: separate; 
-			width: 80%; 
+			width: 90%; 
 			margin: 20px auto;
 			background: #fff;
 			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -39,7 +39,7 @@
 			border: 2px solid #666; 
 			padding: 8px; 
 			text-align: center; 
-			vertical-align: top; 
+			vertical-align: middle; 
 		} 
 		th { 
 			background: linear-gradient(to bottom, #4caf50, #388e3c);
@@ -154,11 +154,12 @@
 			<thead> 
 				<tr> 
 					<th>Name</th> 
-					<th>Scores (Date, Course)</th>
+					<th>Date</th>
+					<th>Course</th>
+					<th>Score</th>
 					<th>Par</th> 
-					<th>Total (vs Par)</th>
+					<th>vs Par</th>
 					<th>Holes Played</th> 
-
 				</tr> 
 			</thead> 
 			<tbody id="golfersBody"></tbody> 
@@ -273,23 +274,28 @@
 					function updateTable() { 
 						const tbody = document.getElementById('golfersBody'); 
 						tbody.innerHTML = ''; 
-						golfers.sort((a, b) => a.name.localeCompare(b.name)).forEach(golfer => { 
+							const allScores = [];
+						golfers.forEach(golfer => {
 							const scores = golfer.scores || [];
-							const totalScore = scores.reduce((sum, s) => sum + s.score, 0);
-							const totalPar = scores.reduce((sum, s) => sum + (s.par || 0), 0);
-							const totalHoles = scores.reduce((sum, s) => sum + (s.holes || 0), 0);
-							const vsPar = totalScore - totalPar;							
-							const row = document.createElement('tr'); 
-							row.innerHTML = ` 
-								<td>${golfer.name}</td> 
-								<td class="scores">${scores
-										      .sort((a, b) => new Date(a.date) - new Date(b.date)) 
-										      .map(s => `<span style="white-space: nowrap;">${s.score} (Par ${s.par || 'N/A'}, 
-												Holes ${s.holes || 'N/A'}, ${s.date}, ${s.course})</span>`)
-										     .join(', ') || '-'}</td> 
-								<td>${totalPar || '0'}</td>
-								<td>${vsPar >= 0 ? '+' : ''}${vsPar || '0'}</td>
-								<td>${totalHoles || '0'}</td>
+							scores.forEach(score => {
+								allScores.push({
+									golferName: golfer.name,
+									...score
+								});
+							});
+						});
+						allScores.sort((a, b) => new Date(b.date) - new Date(a.date));
+						allScores.forEach(score => {
+							const vsPar = score.score - score.par;
+							const row = document.createElement('tr');
+							row.innerHTML = `
+       								<td>${score.golferName}</td>
+	       							<td>${score.date}</td>
+	       							<td>${score.course}</td>
+	       							<td>${score.score}</td>
+	       							<td>${score.par || 'N/A'}</td>
+								<td>${vsPar >= 0 ? '+' : ''}${vsPar}</td>
+								<td>${score.holes || 'N/A'}</td>
 								`; 
 							tbody.appendChild(row); 
 						}); 

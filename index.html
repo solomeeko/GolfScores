@@ -84,7 +84,7 @@
 		input-item {
 			display: flex;
 			flex-direction: column;
-			align=items: center;
+			align-items: center;
 		.form-group label {
 			margin-bottom: 5px;
 			font-weight: 700;
@@ -97,7 +97,7 @@
 			width: 200px;
 			font-size: 20px;
 		}
-		form-group button {
+		.form-group button {
 			margin-top: 25px;
 		}
 		</style> 
@@ -275,8 +275,8 @@
 							const row = document.createElement('tr'); 
 							const formattedScores = scores.sort((a, b) => new Date(b.date) - new Date(a.date)).map(s => {
 							const vsPar = s.score - s.par;
-								return `<div style="white-space: nowrap; margin: 4px 0;"}>
-							${s.date}, ${s.course}, ${vsPar || 'N/A'} holes </div>;
+								return `<div style="white-space: nowrap; margin: 4px 0;">
+							${s.date}, ${s.course}, Score: ${s.score}, Par: ${s.par}, vs Par: ${vsPar >= 0 ? '+' : ''}${vsPar}, Holes: ${s.holes)</div>;
        							})
        							.join('');	      
 							row.innerHTML = `

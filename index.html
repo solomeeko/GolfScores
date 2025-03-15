@@ -36,8 +36,11 @@
 			border-spacing: 2px;
 		} 
 		th, td { 
+			border: 2px solid #666;
 			padding: 8px; 
-			min-width; 100px; 
+			min-width: 100px; 
+			text-align: center;
+			vertical-align: middle;
 		} 
 		th { 
 			background: linear-gradient(to bottom, #4caf50, #388e3c);
@@ -59,11 +62,6 @@
 		button:hover {
 			background: #388e3c;
 		}
-		.scores { 
-			text-align: left;
-			padding: 8px 12px;
-			line-height: 1.4;
-		} 
 		tr { 
 			height: auto;
 			transition: background 0.3s;
@@ -300,20 +298,20 @@
 									const vsPar = Number(s.score) - Number(s.par);
 									if (index === 0) {
 										row.innerHTML = `
-	  									<td rowspan=${scores.length}">${golfer.name}</td>
+	  									<td rowspan="${scores.length}">${golfer.name}</td>
 	    									<td>${s.course}</td>
 	      									<td>${s.par}</td>
 										<td>${s.score}</td>
 	  									<td>${s.vsPar >= 0 ? '+' : ''}${vsPar}</td>
 	    									<td>${s.date}</td>
-	      									<td rowspan=${scores.length}">${totalHoles}</td>
+	      									<td rowspan="${scores.length}">${totalHoles}</td>
 									`;
 									} else {
 										row.innerHTML = `
 	  									<td>${s.course}</td>
 	      									<td>${s.par}</td>
 										<td>${s.score}</td>
-	  									<td>${s.vsPar >= 0 ? '+' : ''}${vsPar}</td>
+	  									<td>${vsPar >= 0 ? '+' : ''}${vsPar}</td>
 	    									<td>${s.date}</td>
 	      								`;
 									}

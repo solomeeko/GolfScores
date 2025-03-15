@@ -36,10 +36,8 @@
 			border-spacing: 2px;
 		} 
 		th, td { 
-			border: 2px solid #666; 
 			padding: 8px; 
-			text-align: center; 
-			vertical-align: middle; 
+			min-width; 100px; 
 		} 
 		th { 
 			background: linear-gradient(to bottom, #4caf50, #388e3c);
@@ -101,6 +99,10 @@
 		.form-group button {
 			margin-top: 25px;
 		}
+		th:last-child,
+		td:last-child {
+			width: 120px;
+		}
 		</style> 
 	</head> 
 	<body> 
@@ -155,8 +157,13 @@
 		<table id="golfersTable"> 
 			<thead> 
 				<tr> 
-					<th>Name</th> 
-					<th>Rounds (Date, Course, Score, Par, vs Par, Holes)</th>
+					<th>Name</th>
+					<th>Course</th>
+					<th>Par</th>
+					<th>Score</th>
+					<th>vs Par</th>
+					<th>Date</th>
+					<th>Holes Played</th>
 				</tr> 
 			</thead> 
 			<tbody id="golfersBody"></tbody> 
@@ -186,8 +193,8 @@
 			
 			// Initial data fetch and real-time listener 
 			document.addEventListener('DOMContentLoaded', () => { 
-			db.collection('golfers').onSnapshot((snapshot) => { golfers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-			   	console.log("Golfers vfrom firestore:", golfers);
+			db.collection('golfers').onSnapshot((snapshot) => { 
+				golfers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 				updateTable(); 
 				updateGolferSelect(); 
 			}, (error) => { 
@@ -273,21 +280,49 @@
 						tbody.innerHTML = ''; 
 						golfers.sort((a, b) => a.name.localeCompare(b.name)).forEach(golfer => {
 							const scores = golfer.scores || [];
-							const row = document.createElement('tr'); 
-							const formattedScores = scores.sort((a, b) => new Date(b.date) - new Date(a.date)).map(s => {
-							const vsPar = s.score - s.par;
-								return `<div style="white-space: nowrap; margin: 4px 0;">
-							${s.date}, ${s.course}, Score: ${s.score}, Par: ${s.par}, Vs Par: ${vsPar >= 0 ? '+' : ''}${vsPar}, Holes: ${s.holes}</div>`;
-       							})
-       							.join('');	      
-							row.innerHTML = `
-       								<td>${golfer.name}</td>
-	       							<td class="scores">${formattedScores || '-'}</td>
-								`; 
-							tbody.appendChild(row); 
-						}); 
-					} 
-					
+							const totalHoles = scores.reduce((sum, s) => sum + Number(s.holes), 0);
+							if (scores.length === 0) {
+								const row = document.createElement('tr'); 
+								row.innerHTML = `
+									<td>${golfer.name}</td>
+	 								<td>-</td>
+	  								<td>-</td>
+	   	 							<td>-</td>
+	  								<td>-</td>
+	   	 							<td>-</td>
+	  								<td>${totalHoles}</td>
+	   							`;
+								tbody.appendChild(row);
+							} else {
+								const sortedScores = scores.sort((a, b) => new Date(b.date) - new Date(a.date));
+								sortedScores.forEach((s, index) => {
+									const row = document.createElement('tr');
+									const vsPar = Number(s.score) - Number(s.par);
+									if (index === 0) {
+										row.innerHTML = `
+	  									<td rowspan=${scores.length}">${golfer.name}</td>
+	    									<td>${s.course}</td>
+	      									<td>${s.par}</td>
+										<td>${s.score}</td>
+	  									<td>${s.vsPar >= 0 ? '+' : ''}${vsPar}</td>
+	    									<td>${s.date}</td>
+	      									<td rowspan=${scores.length}">${totalHoles}</td>
+									`;
+									} else {
+										row.innerHTML = `
+	  									<td>${s.course}</td>
+	      									<td>${s.par}</td>
+										<td>${s.score}</td>
+	  									<td>${s.vsPar >= 0 ? '+' : ''}${vsPar}</td>
+	    									<td>${s.date}</td>
+	      								`;
+									}
+									tbody.appendChild(row);
+								});
+							}
+						});
+					}
+			
 					function updateGolferSelect() { 
 						const select = document.getElementById('golferSelect'); 
 						const currentValue = select.value; 

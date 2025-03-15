@@ -296,13 +296,14 @@
 								sortedScores.forEach((s, index) => {
 									const row = document.createElement('tr');
 									const vsPar = Number(s.score) - Number(s.par);
+									const vsParDisplay = vsPar >= 0 ? `+${vsPar}` : `${vsPar}`;
 									if (index === 0) {
 										row.innerHTML = `
 	  									<td rowspan="${scores.length}">${golfer.name}</td>
 	    									<td>${s.course}</td>
 	      									<td>${s.par}</td>
 										<td>${s.score}</td>
-	  									<td>${s.vsPar >= 0 ? '+' : ''}${vsPar}</td>
+	  									<td>${vsParDiplay}</td>
 	    									<td>${s.date}</td>
 	      									<td rowspan="${scores.length}">${totalHoles}</td>
 									`;
@@ -311,9 +312,9 @@
 	  									<td>${s.course}</td>
 	      									<td>${s.par}</td>
 										<td>${s.score}</td>
-	  									<td>${vsPar >= 0 ? '+' : ''}${vsPar}</td>
+	  									<td>${vsParDisplay}</td>
 	    									<td>${s.date}</td>
-	      								`;
+	      									`;
 									}
 									tbody.appendChild(row);
 								});
